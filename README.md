@@ -6,6 +6,25 @@ Google Fonts.
 
 **Live:** https://norrisgabrielfontanilla-cell.github.io/princejohanconstruction/
 
+![Hero](docs/screenshots/hero-desktop.png)
+
+---
+
+## Design
+
+Industrial identity built for a contractor whose pitch is its compliance record:
+
+| | |
+|---|---|
+| Palette | Charcoal `#0B0D10` / `#16191D` with safety orange `#EA580C` |
+| Display type | Archivo Black — poster-scale, uppercase |
+| Body type | Inter |
+| Surface | Warm paper `#F4F2EC` against the charcoal |
+
+Signature elements: a scrolling credentials marquee under the header, a diagonal-cut
+hero, offset hard shadows on buttons, an asymmetric bento service grid, and
+editorial-numbered project cards with oversized ghost numerals.
+
 ---
 
 ## Company details on the site
@@ -33,71 +52,41 @@ invented.
 ## Repository layout
 
 ```
-index.html                          the entire website
-README.md                           this file
-tools/
-  generate-hero-scene.py            generates the isometric hero SVG
+index.html                              the entire website
+README.md                               this file
 docs/
-  screenshots/                      reference renders of each section
-.github/workflows/
-  deploy-pages.yml                  auto-deploys to GitHub Pages on push to main
+  screenshots/                          renders of each section of the live site
+  alternates/
+    isometric-hero.html                 alternate design (see below)
+    generate-isometric-scene.py         generator for its hero SVG
+    isometric-hero-desktop.png          what it looks like
+    isometric-scene.png                 the raw scene
+.github/workflows/deploy-pages.yml      auto-deploys to GitHub Pages on push to main
 ```
 
 ---
 
-## The hero scene
+## Page structure
 
-The hero background is a hand-built isometric construction site in inline SVG —
-no photography, no 3D render, no external asset. It is **generated**, not
-hand-authored, by `tools/generate-hero-scene.py`.
-
-The script projects 3D grid coordinates to 2D:
-
-```
-screen_x = (x - y) * 30
-screen_y = (x + y) * 15 - z * 26
-```
-
-Every building is drawn as three shaded faces from that projection — top lightest,
-right face mid, left face darkest — which is what gives the solids their depth.
-
-The scene contains a concrete skeleton frame with floor slabs and columns,
-scaffolding, a dark residential tower, a cream apartment block with accent panels,
-a glass podium, a timber site office, three lattice tower cranes, material stacks,
-site hoarding, road markings and vehicles.
-
-### Regenerating it
-
-```bash
-python3 tools/generate-hero-scene.py
-```
-
-This writes an SVG fragment. Paste it inside the `<svg>` in the `.hero-bg` block of
-`index.html`, replacing the previous `<g id="scene">…</g>`. Edit the palette
-constants or building coordinates near the top of the script to change the scene.
-
----
-
-## Motion
-
-Fourteen CSS animations drive the hero:
-
-| Element | Motion |
-|---|---|
-| Crane hooks (×3) | Raise and lower. The rope `scaleY`s from its top anchor while the hook block `translateY`s on the same keyframe timing, so the two stay attached instead of the rope stretching past the block. |
-| Hoist cage | Climbs the skeleton frame and descends. |
-| Crane beacons (×3) | Blink, each on its own offset. |
-| Vehicles (×4) | Drive along the isometric road axis, fading in and out at both ends so the loop never visibly snaps. |
-
-Everything is disabled under `prefers-reduced-motion: reduce`.
+1. **Header** — sticky, with the phone number and a persistent quote CTA
+2. **Marquee** — PCAB / PhilGEPS / SEC / 40+ contracts, scrolling
+3. **Hero** — headline, stat row (17 / 40+ / ₱14.7M / 100%), dual CTA
+4. **Trust bar** — the four credentials as diamond badges
+5. **Services** — six cards in an asymmetric bento grid
+6. **Track record** — eight completed contracts
+7. **Why us** — the six compliance documents, all current
+8. **Service area** — Ilocos Sur, Metro Manila, Cavite, plus nationwide eligibility
+9. **Contact** — details and an inquiry form
+10. **Footer** — credentials repeated, licence details
 
 ---
 
 ## Accessibility and SEO
 
 - Skip link, semantic landmarks, `<address>` for NAP data
-- Visible focus rings; all interactive targets ≥ 44px
-- Trend indicators pair an icon **and** a label with colour, never colour alone
+- Visible focus rings; interactive targets ≥ 44px
+- Verified zero horizontal overflow at 320 / 360 / 390 / 414 / 768 / 1024 / 1440px
+- Marquee animation disabled under `prefers-reduced-motion: reduce`
 - `schema.org` `GeneralContractor` JSON-LD with address, service area and credentials
 - Location-specific copy naming Quezon City, Ilocos Sur, Metro Manila and Cavite
 
@@ -113,10 +102,39 @@ handler at the bottom of `index.html`.
 
 ---
 
+## Alternate design
+
+`docs/alternates/isometric-hero.html` is a complete, working alternative built around
+a full-viewport animated isometric construction site — a concrete skeleton frame,
+scaffolding, three lattice tower cranes, a glass podium and a timber site office, with
+crane hooks that raise and lower, a hoist climbing the frame, blinking beacons and
+vehicles on the road. It uses a lighter palette and a floating pill navbar.
+
+It is **not deployed**. To make it live, replace `index.html` with it.
+
+Its hero SVG is generated, not hand-drawn:
+
+```bash
+python3 docs/alternates/generate-isometric-scene.py
+```
+
+The script projects 3D grid coordinates to 2D —
+
+```
+screen_x = (x - y) * 30
+screen_y = (x + y) * 15 - z * 26
+```
+
+— and draws each building as three shaded faces (top lightest, right mid, left
+darkest). It writes an SVG fragment to paste inside the `<svg>` in the `.hero-bg`
+block, replacing the existing `<g id="scene">…</g>`.
+
+---
+
 ## Deployment
 
 Pushing to `main` triggers `.github/workflows/deploy-pages.yml`, which publishes the
 repository root to GitHub Pages. No build, no install step.
 
-Pages must be set to **Settings → Pages → Source: GitHub Actions** — this is already
-configured and only ever needs doing once.
+Pages must be set to **Settings → Pages → Source: GitHub Actions** — already
+configured, only ever needs doing once.
